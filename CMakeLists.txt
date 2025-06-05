@@ -20,6 +20,16 @@ add_executable(camera_inference
 add_executable(video_inference
                src/video_inference.cpp)
 
+
+# Add executable for diagnostic detector
+add_executable(diagnostic_detector
+               src/diagnostic_detector.cpp)
+
+
+# Add executable for segmentation detector
+add_executable(segmentation_detector
+               src/segmentation_detector.cpp)
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -27,16 +37,24 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 target_include_directories(image_inference PRIVATE "${ONNXRUNTIME_DIR}/include")
 target_include_directories(camera_inference PRIVATE "${ONNXRUNTIME_DIR}/include")
 target_include_directories(video_inference PRIVATE "${ONNXRUNTIME_DIR}/include")
+target_include_directories(segmentation_detector PRIVATE "${ONNXRUNTIME_DIR}/include")
+target_include_directories(diagnostic_detector PRIVATE "${ONNXRUNTIME_DIR}/include")
 
 # Set compile features for all executables
 target_compile_features(image_inference PRIVATE cxx_std_14)
 target_compile_features(camera_inference PRIVATE cxx_std_14)
 target_compile_features(video_inference PRIVATE cxx_std_14)
+target_compile_features(segmentation_detector PRIVATE cxx_std_14)
+target_compile_features(diagnostic_detector PRIVATE cxx_std_14)
+
 
 # Link libraries for all executables
-target_link_libraries(image_inference ${OpenCV_LIBS})
-target_link_libraries(camera_inference ${OpenCV_LIBS})
-target_link_libraries(video_inference ${OpenCV_LIBS})
+target_link_libraries(image_inference ${OpenCV_LIBS} pthread)
+target_link_libraries(camera_inference ${OpenCV_LIBS} pthread)
+target_link_libraries(video_inference ${OpenCV_LIBS} pthread)
+target_link_libraries(segmentation_detector ${OpenCV_LIBS} pthread)
+target_link_libraries(diagnostic_detector ${OpenCV_LIBS} pthread)
+
 
 if(UNIX)
     message(STATUS "We are building on Linux!")
@@ -44,6 +62,8 @@ if(UNIX)
     target_link_libraries(image_inference "${ONNXRUNTIME_DIR}/lib/libonnxruntime.so")
     target_link_libraries(camera_inference "${ONNXRUNTIME_DIR}/lib/libonnxruntime.so")
     target_link_libraries(video_inference "${ONNXRUNTIME_DIR}/lib/libonnxruntime.so")
+    target_link_libraries(segmentation_detector "${ONNXRUNTIME_DIR}/lib/libonnxruntime.so")
+    target_link_libraries(diagnostic_detector "${ONNXRUNTIME_DIR}/lib/libonnxruntime.so")
 endif(UNIX)
 
 if(APPLE)
@@ -52,6 +72,7 @@ if(APPLE)
     target_link_libraries(image_inference "${ONNXRUNTIME_DIR}/lib/libonnxruntime.dylib")
     target_link_libraries(camera_inference "${ONNXRUNTIME_DIR}/lib/libonnxruntime.dylib")
     target_link_libraries(video_inference "${ONNXRUNTIME_DIR}/lib/libonnxruntime.dylib")
+    target_link_libraries(segmentation_detector "${ONNXRUNTIME_DIR}/lib/libonnxruntime.dylib")
 endif(APPLE)
 
 if(WIN32)
@@ -60,4 +81,5 @@ if(WIN32)
     target_link_libraries(image_inference "${ONNXRUNTIME_DIR}/lib/onnxruntime.lib")
     target_link_libraries(camera_inference "${ONNXRUNTIME_DIR}/lib/onnxruntime.lib")
     target_link_libraries(video_inference "${ONNXRUNTIME_DIR}/lib/onnxruntime.lib")
+    target_link_libraries(segmentation_detector "${ONNXRUNTIME_DIR}/lib/onnxruntime.lib")
 endif(WIN32)
